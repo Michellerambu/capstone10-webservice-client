@@ -6,15 +6,32 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// Halaman Utama - Sekarang pakai filter auth
+// Halaman Utama
 $routes->get('/', 'Home::index', ['filter' => 'auth']);
 
-// Rute Autentikasi (Jangan dikasih filter auth, nanti malah gak bisa login)
+// Auth
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
 
-// Rute Halaman Produk & Keranjang - Pakai filter auth
-$routes->get('produk', 'ProdukController::index', ['filter' => 'auth']);
+// Profile
+$routes->get('profile', 'ProfileController::index', ['filter' => 'auth']);
+
+// Keranjang
 $routes->get('keranjang', 'TransaksiController::index', ['filter' => 'auth']);
-$routes->get('/profile', 'ProfileController::index', ['filter' => 'auth']);
+
+// Group Produk
+$routes->group('produk', ['filter' => 'auth'], function ($routes) {
+
+    // tampil data produk
+    $routes->get('', 'ProdukController::index');
+
+    // tambah data produk
+    $routes->post('', 'ProdukController::create');
+
+    // edit data produk
+    $routes->post('edit/(:any)', 'ProdukController::edit/$1');
+
+    // hapus data produk
+    $routes->get('delete/(:any)', 'ProdukController::delete/$1');
+});
